@@ -53,7 +53,7 @@ tasks {
 
     register<JavaExec>("node") {
         classpath = sourceSets["main"].runtimeClasspath
-        main = "raft.system.NodeKt"
+        mainClass.set("raft.system.NodeKt")
         args = listOf(processId, implName)
         standardInput = System.`in`
     }
@@ -63,5 +63,11 @@ tasks {
         mainClass.set("raft.system.SystemKt")
         args = listOf(implName)
         standardInput = System.`in`
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
