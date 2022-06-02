@@ -14,8 +14,8 @@ data class LogId(
     val term: Int
 ) : Comparable<LogId> {
     override fun compareTo(other: LogId): Int {
-        if (index != other.index) return index.compareTo(other.index)
-        return term.compareTo(other.term)
+        if (term != other.term) return term.compareTo(other.term)
+        return index.compareTo(other.index)
     }
 }
 

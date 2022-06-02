@@ -127,6 +127,21 @@ class MockTest(
     }
 
     @Test
+    fun `FOLLOWER votes for a candidate with more up-to-date log (new term, old index)`() {
+        if (term <= 1 || lastLogId.index == 0) return
+        val oldIndex = findOldLogId().index
+        val candidateId = (processId + rnd.nextInt(nProcesses - 1)) % nProcesses + 1
+        val newTerm = term + rnd.nextInt(1..3)
+        val oldLogId = LogId(oldIndex, newTerm)
+        process.onMessage(candidateId, RequestVoteRpc(newTerm, oldLogId))
+        expectActions(
+            WritePersistentState(PersistentState(newTerm, votedFor = candidateId)),
+            Send(candidateId, RequestVoteResult(newTerm, true)),
+            StartTimeout(ELECTION_TIMEOUT)
+        )
+    }
+
+    @Test
     fun `FOLLOWER refuses to vote for a different candidate`() {
         val candidateId1 = processId % nProcesses + 1
         val candidateId2 = candidateId1 % nProcesses + 1
@@ -165,6 +180,21 @@ class MockTest(
         val candidateId = (processId + rnd.nextInt(nProcesses - 1)) % nProcesses + 1
         val newTerm = term + rnd.nextInt(1..3)
         val oldLogId = LogId(lastLogId.index, lastLogId.term - 1)
+        process.onMessage(candidateId, RequestVoteRpc(newTerm, oldLogId))
+        expectActions(
+            WritePersistentState(PersistentState(newTerm)),
+            Send(candidateId, RequestVoteResult(newTerm, false)),
+            StartTimeout(ELECTION_TIMEOUT)
+        )
+    }
+
+    @Test
+    fun `FOLLOWER refuses to vote for a candidate with not up-to-date log (new index, old term)`() {
+        if (lastLogId.term <= 1) return
+        val candidateId = (processId + rnd.nextInt(nProcesses - 1)) % nProcesses + 1
+        val newTerm = term + rnd.nextInt(1..3)
+        val newIndex = lastLogId.index + rnd.nextInt(1..3)
+        val oldLogId = LogId(newIndex, lastLogId.term - 1)
         process.onMessage(candidateId, RequestVoteRpc(newTerm, oldLogId))
         expectActions(
             WritePersistentState(PersistentState(newTerm)),
