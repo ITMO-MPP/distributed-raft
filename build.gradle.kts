@@ -1,11 +1,8 @@
-
-group = "ru.ifmo.pds"
-version = "1.0-SNAPSHOT"
-
 plugins {
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.serialization") version "1.9.22"
-    id("org.jetbrains.kotlinx.kover") version "0.7.6"
+    kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "2.1.10"
+    id("org.jetbrains.kotlinx.kover") version "0.9.1"
+    java
 }
 
 repositories {
@@ -20,7 +17,7 @@ java {
 
 dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.11")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     testImplementation(kotlin("test-junit"))
 }
 
@@ -61,4 +58,3 @@ tasks {
         standardInput = System.`in`
     }
 }
-
